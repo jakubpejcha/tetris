@@ -1,3 +1,1 @@
-import { sayHello } from './test';
-
-sayHello('Hello world, again');
+import './sass/main.scss';
