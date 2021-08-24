@@ -1,0 +1,142 @@
+@use '../abstracts' as abs;
+
+.block {
+    display: grid;
+    // position: absolute;
+
+    &__cell {
+        box-sizing: border-box;
+        width: abs.$cell-size;
+        height: abs.$cell-size;
+    }
+
+    &--square {
+        width: calc(#{abs.$cell-size} * 2);
+        height: calc(#{abs.$cell-size} * 2);
+        grid-template-columns: repeat(2, abs.$cell-size);
+        grid-template-rows: repeat(2, abs.$cell-size);
+
+        & > .block__cell {
+            background-color: abs.$block-square-color;
+            border: outset 5px abs.$block-square-border-color;
+        }
+    }
+
+    &--cake {
+        width: calc(#{abs.$cell-size} * 3);
+        height: calc(#{abs.$cell-size} * 2);
+        grid-template-columns: repeat(3, abs.$cell-size);
+        grid-template-rows: repeat(2, abs.$cell-size);
+
+        & > .block__cell {
+            background-color: abs.$block-cake-color;
+            border: outset 5px abs.$block-cake-border-color;
+
+            &:last-child {
+                grid-column: 2;
+            }
+        }
+    }
+
+    &--el {
+        width: calc(#{abs.$cell-size} * 3);
+        height: calc(#{abs.$cell-size} * 2);
+        grid-template-columns: repeat(3, abs.$cell-size);
+        grid-template-rows: repeat(2, abs.$cell-size);
+
+        & > .block__cell {
+            background-color: abs.$block-el-color;
+            border: outset 5px abs.$block-el-border-color;
+        }
+    }
+
+    &--el-reverse {
+        width: calc(#{abs.$cell-size} * 3);
+        height: calc(#{abs.$cell-size} * 2);
+        grid-template-columns: repeat(3, abs.$cell-size);
+        grid-template-rows: repeat(2, abs.$cell-size);
+
+        & > .block__cell {
+            background-color: abs.$block-el-reverse-color;
+            border: outset 5px abs.$block-el-reverse-border-color;
+
+            &:last-child {
+                grid-column: 3;
+            }
+        }
+    }
+
+    &--zigzag {
+        width: calc(#{abs.$cell-size} * 3);
+        height: calc(#{abs.$cell-size} * 2);
+        grid-template-columns: repeat(3, abs.$cell-size);
+        grid-template-rows: repeat(2, abs.$cell-size);
+
+        & > .block__cell {
+            background-color: abs.$block-zigzag-color;
+            border: outset 5px abs.$block-zigzag-border-color;
+
+            &:nth-child(3) {
+                grid-row: 2;
+                grid-column: 2;
+            }
+
+            &:nth-child(4) {
+                grid-row: 2;
+                grid-column: 3;
+            }
+        }
+    }
+
+    &--zigzag-reverse {
+        width: calc(#{abs.$cell-size} * 3);
+        height: calc(#{abs.$cell-size} * 2);
+        grid-template-columns: repeat(3, abs.$cell-size);
+        grid-template-rows: repeat(2, abs.$cell-size);
+
+        & > .block__cell {
+            background-color: abs.$block-zigzag-reverse-color;
+            border: outset 5px abs.$block-zigzag-reverse-border-color;
+
+            &:nth-child(1) {
+                grid-column: 2;
+            }
+
+            &:nth-child(2) {
+                grid-column: 3;
+            }
+        }
+    }
+
+    &--line {
+        grid-template-rows: 1;
+
+        & > .block__cell {
+            background-color: abs.$block-line-color;
+            border: outset 5px abs.$block-line-border-color;
+        }
+
+        &--1 {
+            width: abs.$cell-size;
+            height: abs.$cell-size;
+        }
+
+        &--2 {
+            width: calc(#{abs.$cell-size} * 2);
+            height: abs.$cell-size;
+            grid-template-columns: repeat(2, abs.$cell-size);
+        }
+
+        &--3 {
+            width: calc(#{abs.$cell-size} * 3);
+            height: abs.$cell-size;
+            grid-template-columns: repeat(3, abs.$cell-size);
+        }
+
+        &--4 {
+            width: calc(#{abs.$cell-size} * 4);
+            height: abs.$cell-size;
+            grid-template-columns: repeat(4, abs.$cell-size);
+        }
+    }
+}
