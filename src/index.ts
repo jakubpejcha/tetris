@@ -26,16 +26,16 @@ document.addEventListener('keydown', (e) => {
     if (bottom <= 0) return;
 
     if (e.key === 'ArrowDown') {
-        entity!.style.top = `${top + 10}px`;
+        entity!.style.top = `${top + 40}px`;
     } else if (e.key === 'ArrowUp') {
         // no up direction
-        //entity!.style.top = `${top - 10}px`;
+        //entity!.style.top = `${top - 40}px`;
     } else if (e.key === 'ArrowLeft' && left > 0) {
-        entity!.style.left = `${left - 10}px`;
+        entity!.style.left = `${left - 40}px`;
     } else if (
         e.key === 'ArrowRight' &&
         left + entity!.offsetWidth < containerInnerWidth
     ) {
-        entity!.style.left = `${left + 10}px`;
+        entity!.style.left = `${left + 40}px`;
     }
 });

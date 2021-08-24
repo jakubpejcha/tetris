@@ -1,10 +1,11 @@
 @use '../abstracts' as abs;
 
 .entity {
+    box-sizing: border-box;
     position: absolute;
-    top: 10px;
     width: abs.$cell-size;
     height: abs.$cell-size;
-    background-color: black;
+    background-color: abs.$block-cake-color;
+    border: outset 5px abs.$block-cake-border-color;
     // transition: top 0.2s;
 }

@@ -9,23 +9,24 @@ body {
 }
 
 .app-container {
-    box-sizing: content-box;
     width: calc(#{abs.$num-cells-per-row} * #{abs.$cell-size});
     height: calc(#{abs.$num-cells-per-column} * #{abs.$cell-size});
     margin: auto;
     position: relative;
     grid-column: 2;
     grid-row: 2;
-    background-color: yellow;
-    opacity: 0.5;
+    background: #000;
 }
 
 .background {
     &__grid {
+        box-sizing: content-box;
         width: calc((#{abs.$num-cells-per-row} + 2) * #{abs.$cell-size});
         height: calc((#{abs.$num-cells-per-column} + 2) * #{abs.$cell-size});
         margin: auto;
         border: 1px solid black;
+        border-radius: 20px;
+        overflow: hidden;
         display: grid;
         grid-template-columns:
             [first-col] abs.$cell-size repeat(
@@ -42,8 +43,7 @@ body {
     }
 
     &__column {
-        background-color: black;
-        opacity: 0.5;
+        // background-color: black;
         width: abs.$cell-size;
         height: calc((#{abs.$num-cells-per-column} + 2) * #{abs.$cell-size});
         display: grid;
@@ -63,8 +63,7 @@ body {
     }
 
     &__row {
-        background-color: red;
-        opacity: 0.5;
+        // background-color: red;
         width: calc(#{abs.$num-cells-per-row} * #{abs.$cell-size});
         height: abs.$cell-size;
         display: grid;
@@ -81,5 +80,13 @@ body {
         &--bottom {
             grid-row: last-row;
         }
+    }
+
+    &__cell {
+        box-sizing: border-box;
+        width: abs.$cell-size;
+        height: abs.$cell-size;
+        border: outset 5px abs.$border-cell-border-color;
+        background: abs.$border-cell-color;
     }
 }
