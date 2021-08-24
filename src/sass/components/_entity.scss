@@ -1,9 +1,10 @@
+@use '../abstracts' as abs;
+
 .entity {
     position: absolute;
     top: 10px;
-    // left: 10px;
-    width: 100px;
-    height: 100px;
+    width: abs.$cell-size;
+    height: abs.$cell-size;
     background-color: black;
     // transition: top 0.2s;
 }

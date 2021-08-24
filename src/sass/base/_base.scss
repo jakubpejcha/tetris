@@ -1,12 +1,85 @@
+@use '../abstracts' as abs;
+
+html {
+    font-size: 62.5%;
+}
+
 body {
     box-sizing: border-box;
 }
 
 .app-container {
-    width: 606px;
+    box-sizing: content-box;
+    width: calc(#{abs.$num-cells-per-row} * #{abs.$cell-size});
+    height: calc(#{abs.$num-cells-per-column} * #{abs.$cell-size});
     margin: auto;
-    border-left: 3px solid red;
-    border-right: 3px solid red;
-    height: 100vh;
     position: relative;
+    grid-column: 2;
+    grid-row: 2;
+    background-color: yellow;
+    opacity: 0.5;
+}
+
+.background {
+    &__grid {
+        width: calc((#{abs.$num-cells-per-row} + 2) * #{abs.$cell-size});
+        height: calc((#{abs.$num-cells-per-column} + 2) * #{abs.$cell-size});
+        margin: auto;
+        border: 1px solid black;
+        display: grid;
+        grid-template-columns:
+            [first-col] abs.$cell-size repeat(
+                abs.$num-cells-per-row,
+                abs.$cell-size
+            )
+            [last-col] abs.$cell-size;
+        grid-template-rows:
+            [first-row] abs.$cell-size repeat(
+                abs.$num-cells-per-column,
+                abs.$cell-size
+            )
+            [last-row] abs.$cell-size;
+    }
+
+    &__column {
+        background-color: black;
+        opacity: 0.5;
+        width: abs.$cell-size;
+        height: calc((#{abs.$num-cells-per-column} + 2) * #{abs.$cell-size});
+        display: grid;
+        grid-row: 1;
+        grid-template-rows: repeat(
+            calc(#{abs.$num-cells-per-column} + 2),
+            abs.$cell-size
+        );
+
+        &--left {
+            grid-column: first-col;
+        }
+
+        &--right {
+            grid-column: last-col;
+        }
+    }
+
+    &__row {
+        background-color: red;
+        opacity: 0.5;
+        width: calc(#{abs.$num-cells-per-row} * #{abs.$cell-size});
+        height: abs.$cell-size;
+        display: grid;
+        grid-column: 2;
+        grid-template-columns: repeat(
+            abs.$num-cells-per-column,
+            abs.$cell-size
+        );
+
+        &--top {
+            grid-row: first-row;
+        }
+
+        &--bottom {
+            grid-row: last-row;
+        }
+    }
 }
