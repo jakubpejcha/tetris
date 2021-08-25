@@ -1,41 +1,51 @@
 import './sass/main.scss';
+import CakeBlock from './blocks/CakeBlock';
+import SquareBlock from './blocks/SquareBlock';
+import { blockFactory } from './blockFactory';
+import ElBlock from './blocks/ElBlock';
+import ElReverseBlock from './blocks/ElReverseBlock';
+import ZigzagBlock from './blocks/ZigzagBlock';
+import ZigzagReverseBlock from './blocks/ZigzagReverseBlock';
+import Line1Block from './blocks/Line1Block';
+import Line2Block from './blocks/Line2Block';
+import Line3Block from './blocks/Line3Block';
+import Line4Block from './blocks/Line4Block';
 
-const entity = document.querySelector<HTMLElement>('.entity');
-const container = document.querySelector<HTMLElement>('.app-container');
+const blocks = [
+    CakeBlock,
+    SquareBlock,
+    ElBlock,
+    ElReverseBlock,
+    ZigzagBlock,
+    ZigzagReverseBlock,
+    Line1Block,
+    Line2Block,
+    Line3Block,
+    Line4Block,
+];
 
-console.log('-------------offsets:---------------');
-console.log('left:', entity!.offsetLeft);
-console.log('top:', entity!.offsetTop);
-console.log('width:', entity!.offsetWidth);
-console.log('height:', entity!.offsetHeight);
-console.log('-------------sides-------------------');
-console.log('left', getComputedStyle(entity as HTMLElement).left);
-console.log('-------------container-------------------');
-console.log('client-width', container!.clientWidth);
-console.log('offset-width', container!.offsetWidth);
-console.log('width', getComputedStyle(container as HTMLElement).top);
+const randomBlockPicker = () => {
+    const randIndex = Math.round(Math.random() * (blocks.length - 1));
+    return blocks[randIndex];
+};
+
+let fallingBlock = blockFactory(randomBlockPicker());
 
 document.addEventListener('keydown', (e) => {
-    const top = parseFloat(getComputedStyle(entity as HTMLElement).top);
-    const left = parseFloat(getComputedStyle(entity as HTMLElement).left);
-    const containerInnerWidth = container!.clientWidth;
+    const left = fallingBlock.left();
+    const right = fallingBlock.right();
 
-    const bottom = parseFloat(getComputedStyle(entity as HTMLElement).bottom);
-
-    console.log(left + entity!.offsetWidth, containerInnerWidth);
-    if (bottom <= 0) return;
+    console.log(left);
 
     if (e.key === 'ArrowDown') {
-        entity!.style.top = `${top + 40}px`;
-    } else if (e.key === 'ArrowUp') {
-        // no up direction
-        //entity!.style.top = `${top - 40}px`;
+        fallingBlock.moveDown();
     } else if (e.key === 'ArrowLeft' && left > 0) {
-        entity!.style.left = `${left - 40}px`;
-    } else if (
-        e.key === 'ArrowRight' &&
-        left + entity!.offsetWidth < containerInnerWidth
-    ) {
-        entity!.style.left = `${left + 40}px`;
+        fallingBlock.moveLeft();
+    } else if (e.key === 'ArrowRight' && right > 0) {
+        fallingBlock.moveRight();
     }
+});
+
+document.addEventListener('block-stopped', () => {
+    fallingBlock = blockFactory(randomBlockPicker());
 });

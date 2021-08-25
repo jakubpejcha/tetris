@@ -2,7 +2,9 @@
 
 .block {
     display: grid;
-    // position: absolute;
+    position: absolute;
+    left: calc(#{abs.$num-cells-per-row} * #{abs.$cell-size} / 2);
+    // transform: translateX(-50%);
 
     &__cell {
         box-sizing: border-box;

@@ -8,7 +8,7 @@ body {
     box-sizing: border-box;
 }
 
-.app-container {
+.game-container {
     width: calc(#{abs.$num-cells-per-row} * #{abs.$cell-size});
     height: calc(#{abs.$num-cells-per-column} * #{abs.$cell-size});
     margin: auto;
@@ -16,6 +16,7 @@ body {
     grid-column: 2;
     grid-row: 2;
     background: #000;
+    overflow: hidden;
 }
 
 .background {
