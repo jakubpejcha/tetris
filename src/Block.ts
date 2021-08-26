@@ -6,6 +6,8 @@ export default class Block {
     // initial blank div, will be rewritten in render
     private _element = document.createElement('div');
     private _moveAmount = 40;
+    private _prevRafTimestamp = 0;
+    private _currRotationAngle = 0;
 
     constructor(className: string) {
         this.className = className;
@@ -64,12 +66,39 @@ export default class Block {
         this._element.style.left = `${left + this._moveAmount}px`;
     }
 
+    rotateClockWise() {
+        this._element.style.transform = `rotate(${
+            this._currRotationAngle + 90
+        }deg)`;
+
+        this._currRotationAngle += 90;
+
+        this._fixCellViewOnBlockRotation();
+    }
+
+    rotateAntiClockWise() {
+        this._element.style.transform = `rotate(${
+            this._currRotationAngle - 90
+        }deg)`;
+
+        this._currRotationAngle -= 90;
+
+        this._fixCellViewOnBlockRotation();
+    }
+
+    // becouse of outset border
+    private _fixCellViewOnBlockRotation() {
+        this._element.querySelectorAll('div').forEach((unit) => {
+            unit.style.transform = `rotate(${-this._currRotationAngle}deg)`;
+        });
+    }
+
     notifyOnStop() {
         const event = new Event('block-stopped', { bubbles: true });
         this._element.dispatchEvent(event);
     }
 
-    fall() {
+    fall(timestamp: DOMHighResTimeStamp) {
         const top = parseFloat(getComputedStyle(this._element).top);
 
         if (parseFloat(getComputedStyle(this._element).bottom) <= 0) {
@@ -78,7 +107,11 @@ export default class Block {
             return null;
         }
 
-        this._element.style.top = `${top + 3}px`;
+        // only run one callback per frame
+        if (this._prevRafTimestamp !== timestamp) {
+            this._prevRafTimestamp = timestamp;
+            this._element.style.top = `${top + 3}px`;
+        }
 
         window.requestAnimationFrame(this.fall.bind(this));
     }

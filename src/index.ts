@@ -35,14 +35,16 @@ document.addEventListener('keydown', (e) => {
     const left = fallingBlock.left();
     const right = fallingBlock.right();
 
-    console.log(left);
-
     if (e.key === 'ArrowDown') {
         fallingBlock.moveDown();
     } else if (e.key === 'ArrowLeft' && left > 0) {
         fallingBlock.moveLeft();
     } else if (e.key === 'ArrowRight' && right > 0) {
         fallingBlock.moveRight();
+    } else if (e.key === 'a') {
+        fallingBlock.rotateAntiClockWise();
+    } else if (e.key === 'd') {
+        fallingBlock.rotateClockWise();
     }
 });
 
