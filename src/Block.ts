@@ -44,7 +44,6 @@ export default class Block {
 
             distances.push(unitBottom - Board.getXHeight(unitXCoord));
         });
-        console.log('distances:', distances);
 
         return distances;
     }
@@ -66,7 +65,6 @@ export default class Block {
     protected startFalling() {
         // TODO: move outside
         this._calculateDistanceFromObj();
-        console.log(this._distanceFromObj);
 
         window.requestAnimationFrame(this.fall.bind(this));
     }
@@ -160,9 +158,6 @@ export default class Block {
             } else if (minUnitTopOffsets[xCoord] > unit.offsetTop) {
                 minUnitTopOffsets[xCoord] = unit.offsetTop;
             }
-
-            // TODO: wrong height, does not count for empty cells
-            //Board.setXHeight(xCoord, unit.offsetHeight);
         });
 
         const blockBottom = parseFloat(getComputedStyle(this._element).bottom);
@@ -177,6 +172,49 @@ export default class Block {
         }
     }
 
+    private _updateBoardRows() {
+        this._element.querySelectorAll('div').forEach((unit) => {
+            Board.updateRows(
+                this._getUnitXCoord(unit),
+                this._getUnitBottom(unit),
+                unit
+            );
+        });
+    }
+
+    private _deleteFullRows() {
+        const fullRows = Board.findFullRows();
+        Board.deleteFullRows(fullRows);
+
+        // updatexHeights
+        Board.decreaseXCoordsHeight(fullRows.length);
+
+        // move everything down
+        this._lowerBlocksAfterRowDelete(fullRows);
+    }
+
+    private _lowerBlocksAfterRowDelete(fullRows: number[]) {
+        // no delete
+        if (fullRows.length === 0) return null;
+
+        //TODO: update Board.rows
+
+        const lowerBy = fullRows.length * 40;
+        const highestRowNumber = Math.max(...fullRows);
+        const lastRowNumber = Board.lastRowNumber;
+
+        for (let i = highestRowNumber + 40; i <= lastRowNumber; i += 40) {
+            for (const xCoord in Board.rows[i]) {
+                if (Board.rows[i][xCoord] === null) continue;
+                Board.rows[i][
+                    xCoord
+                ]!.style.transform = `translateY(${lowerBy}px)`;
+            }
+        }
+
+        Board.updateRowsAfterRowDelete(highestRowNumber + 40, lowerBy);
+    }
+
     fall(timestamp: DOMHighResTimeStamp) {
         const top = parseFloat(getComputedStyle(this._element).top);
 
@@ -184,6 +222,8 @@ export default class Block {
             //this._element.style.bottom = '0px';
             // calc new bottom coords
             this._updateBoardXCoordsHeights();
+            this._updateBoardRows();
+            this._deleteFullRows();
 
             this.notifyOnStop();
             return null;

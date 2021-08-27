@@ -12,19 +12,19 @@ import Line3Block from './blocks/Line3Block';
 import Line4Block from './blocks/Line4Block';
 import Board from './Board';
 
-Board.initializeXCoordsHeights();
+Board.init();
 
 const blocks = [
-    // CakeBlock,
-    // SquareBlock,
-    // ElBlock,
-    // ElReverseBlock,
+    CakeBlock,
+    SquareBlock,
+    ElBlock,
+    ElReverseBlock,
     ZigzagBlock,
-    // ZigzagReverseBlock,
-    // Line1Block,
-    // Line2Block,
-    // Line3Block,
-    // Line4Block,
+    ZigzagReverseBlock,
+    Line1Block,
+    Line2Block,
+    Line3Block,
+    Line4Block,
 ];
 
 const randomBlockPicker = () => {
