@@ -1,6 +1,6 @@
 import { gameContainer } from './baseElements';
 
-interface XCoordsHeights {
+interface CoordsHeights {
     [index: number]: number;
 }
 
@@ -13,12 +13,10 @@ interface Rows {
 }
 
 class Board {
-    private _xCoordHeights: XCoordsHeights = {};
+    private _xCoordHeights: CoordsHeights = {};
     private _rows: Rows = {};
 
-    constructor() {
-        //this._initializeXCoords();
-    }
+    constructor() {}
 
     init() {
         this._initializeXCoordsHeights();

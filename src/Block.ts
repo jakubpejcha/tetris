@@ -98,14 +98,16 @@ export default class Block {
     }
 
     moveLeft() {
-        const left = parseFloat(getComputedStyle(this._element).left);
+        if (!this.canMoveLeft()) return null;
+        const left = this.left();
         this._element.style.left = `${left - this._moveAmount}px`;
         // recalculate distance
         this._calculateDistanceFromObj();
     }
 
     moveRight() {
-        const left = parseFloat(getComputedStyle(this._element).left);
+        if (!this.canMoveRight()) return null;
+        const left = this.left();
         this._element.style.left = `${left + this._moveAmount}px`;
         // recalculate distance
         this._calculateDistanceFromObj();
@@ -239,5 +241,87 @@ export default class Block {
         }
 
         window.requestAnimationFrame(this.fall.bind(this));
+    }
+
+    getLeftmostUnits() {
+        const units: HTMLDivElement[] = [];
+        this._element.querySelectorAll('div').forEach((unit) => {
+            // leftmost units have zero left offset from parent
+            if (unit.offsetLeft === 0) units.push(unit);
+        });
+        return units;
+    }
+
+    getRightmostUnits() {
+        const units: HTMLDivElement[] = [];
+        this._element.querySelectorAll('div').forEach((unit) => {
+            if (unit.offsetLeft === this._element.offsetWidth - 40)
+                units.push(unit);
+        });
+        return units;
+    }
+
+    private _getContainingRows(unit: HTMLDivElement) {
+        const bottom = this._getUnitBottom(unit);
+        const overflow = bottom % 40;
+
+        if (overflow === 0) {
+            // only single row occuppied
+            return {
+                top: bottom,
+                bottom: bottom,
+            };
+        } else {
+            return {
+                top: bottom - overflow + unit.offsetHeight,
+                bottom: bottom - overflow,
+            };
+        }
+    }
+
+    canMoveLeft() {
+        const leftPosition = this.left() - 40;
+
+        //wall
+        if (leftPosition === -40) return false;
+
+        let canMove = true;
+
+        this.getLeftmostUnits().forEach((unit) => {
+            if (
+                Board.rows[this._getContainingRows(unit).top][leftPosition] !==
+                    null ||
+                Board.rows[this._getContainingRows(unit).bottom][
+                    leftPosition
+                ] !== null
+            ) {
+                canMove = false;
+            }
+        });
+
+        return canMove;
+    }
+
+    canMoveRight() {
+        const rightPosition = this.left() + this._element.offsetWidth;
+
+        // wall
+        if (rightPosition === this._gameContainer!.offsetWidth) return false;
+
+        let canMove = true;
+
+        this.getRightmostUnits().forEach((unit) => {
+            if (
+                Board.rows[this._getContainingRows(unit).top][rightPosition] !==
+                    null ||
+                Board.rows[this._getContainingRows(unit).bottom][
+                    rightPosition
+                ] !== null
+            ) {
+                canMove = false;
+            }
+        });
+
+        return canMove;
     }
 }
