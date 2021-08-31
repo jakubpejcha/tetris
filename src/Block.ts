@@ -14,7 +14,7 @@ export default class Block {
 
     // in px per frame
     // must divide cell size
-    private _fallingSpeed = 1;
+    private _fallingSpeed = 2;
 
     constructor(className: string) {
         this.className = className;
@@ -41,23 +41,33 @@ export default class Block {
 
     private _calculateDistancePerUnit() {
         const distances: number[] = [];
-        this._element.querySelectorAll('div').forEach((unit) => {
-            const unitXCoord = this._getUnitXCoord(unit);
-            const unitBottom = this._getUnitBottom(unit);
+        this._element
+            .querySelectorAll<HTMLDivElement>('div.block__cell')
+            .forEach((unit) => {
+                const unitXCoord = this._getUnitXCoord(unit);
+                const unitBottom = this._getUnitBottom(unit);
 
-            distances.push(unitBottom - Board.getXHeight(unitXCoord));
-        });
+                distances.push(unitBottom - Board.getXHeight(unitXCoord));
+            });
 
         return distances;
+    }
+
+    private _adjustShadow() {
+        this._element
+            .querySelectorAll<HTMLDivElement>('div.shadow')
+            .forEach((shadowUnit) => {
+                shadowUnit.style.top = `${this._distanceFromObj - 5}px`;
+            });
     }
 
     private _calculateDistanceFromObj() {
         const distances = this._calculateDistancePerUnit();
         this._distanceFromObj = Math.min(...distances);
+        this._adjustShadow();
     }
 
     left() {
-        //return this._element.offsetLeft;
         return parseFloat(getComputedStyle(this._element).left);
     }
 
@@ -65,9 +75,30 @@ export default class Block {
         return parseFloat(getComputedStyle(this._element).right);
     }
 
+    createShadow() {
+        this._element
+            .querySelectorAll<HTMLDivElement>('div.block__cell')
+            .forEach((unit) => {
+                const unitShadow = document.createElement('div');
+                unitShadow.classList.add('shadow');
+                unitShadow.style.top = `${this._distanceFromObj - 5}px`;
+                unit.insertAdjacentElement('afterbegin', unitShadow);
+            });
+    }
+
+    destroyShadow() {
+        this._element
+            .querySelectorAll<HTMLDivElement>('div.shadow')
+            .forEach((shadowUnit) => {
+                shadowUnit.remove();
+            });
+    }
+
     protected startFalling() {
         // TODO: move outside
         this._calculateDistanceFromObj();
+
+        this.createShadow();
 
         window.requestAnimationFrame(this.fall.bind(this));
     }
@@ -89,6 +120,13 @@ export default class Block {
     }
 
     moveDown() {
+        console.log(
+            getComputedStyle(
+                document.querySelector('.block__cell') as HTMLDivElement,
+                ':after'
+            ).transform
+        );
+
         const top = parseFloat(getComputedStyle(this._element).top);
         if (this._moveAmount > this._distanceFromObj) {
             this._element.style.top = `${top + this._distanceFromObj}px`;
@@ -116,9 +154,6 @@ export default class Block {
     }
 
     rotateClockWise() {
-        // const prevTop = this._element.getBoundingClientRect().top;
-        // const prevLeft = this._element.getBoundingClientRect().left;
-
         this._element.style.transform = `rotate(${
             this._currRotationAngle + 90
         }deg)`;
@@ -127,27 +162,11 @@ export default class Block {
 
         this._fixCellViewOnBlockRotation();
 
-        // const newTop = this._element.getBoundingClientRect().top;
-        // const newLeft = this._element.getBoundingClientRect().left;
-
-        // const deltaTop = newTop - prevTop;
-        // const deltaLeft = newLeft - prevLeft;
-
-        // this._element.style.top = `${
-        //     parseFloat(getComputedStyle(this._element).top) + deltaTop
-        // }`;
-        // this._element.style.left = `${
-        //     parseFloat(getComputedStyle(this._element).left) + deltaLeft
-        // }`;
-
         // recalculate distance
         this._calculateDistanceFromObj();
     }
 
     rotateAntiClockWise() {
-        // const prevTop = this._element.getBoundingClientRect().top;
-        // const prevLeft = this._element.getBoundingClientRect().left;
-
         this._element.style.transform = `rotate(${
             this._currRotationAngle - 90
         }deg)`;
@@ -156,28 +175,17 @@ export default class Block {
 
         this._fixCellViewOnBlockRotation();
 
-        // const newTop = this._element.getBoundingClientRect().top;
-        // const newLeft = this._element.getBoundingClientRect().left;
-
-        // const deltaTop = newTop - prevTop;
-        // const deltaLeft = newLeft - prevLeft;
-
-        // this._element.style.top = `${
-        //     parseFloat(getComputedStyle(this._element).top) + deltaTop
-        // }`;
-        // this._element.style.left = `${
-        //     parseFloat(getComputedStyle(this._element).left) + deltaLeft
-        // }`;
-
         // recalculate distance
         this._calculateDistanceFromObj();
     }
 
     // becouse of outset border
     private _fixCellViewOnBlockRotation() {
-        this._element.querySelectorAll('div').forEach((unit) => {
-            unit.style.transform = `rotate(${-this._currRotationAngle}deg)`;
-        });
+        this._element
+            .querySelectorAll<HTMLDivElement>('div.block__cell')
+            .forEach((unit) => {
+                unit.style.transform = `rotate(${-this._currRotationAngle}deg)`;
+            });
     }
 
     notifyOnStop() {
@@ -187,40 +195,46 @@ export default class Block {
 
     private _updateBoardXCoordsHeights() {
         const minUnitTopOffsets: { [index: number]: number } = {};
-        this._element.querySelectorAll('div').forEach((unit) => {
-            const xCoord = this._getUnitXCoord(unit);
-            if (typeof minUnitTopOffsets[xCoord] === 'undefined') {
-                minUnitTopOffsets[xCoord] = unit.offsetTop;
-            } else if (minUnitTopOffsets[xCoord] > unit.offsetTop) {
-                minUnitTopOffsets[xCoord] = unit.offsetTop;
-            }
-            console.log(xCoord);
-        });
+        this._element
+            .querySelectorAll<HTMLDivElement>('div.block__cell')
+            .forEach((unit) => {
+                const xCoord = this._getUnitXCoord(unit);
+                if (typeof minUnitTopOffsets[xCoord] === 'undefined') {
+                    minUnitTopOffsets[xCoord] = unit.offsetTop;
+                } else if (minUnitTopOffsets[xCoord] > unit.offsetTop) {
+                    minUnitTopOffsets[xCoord] = unit.offsetTop;
+                }
+            });
 
-        //const blockBottom = parseFloat(getComputedStyle(this._element).bottom);
         const blockBottom = Math.abs(
             this._element.getBoundingClientRect().bottom -
                 this._gameContainer!.getBoundingClientRect().bottom
         );
 
+        const elementHeight = Math.abs(
+            this._element.getBoundingClientRect().top -
+                this._element.getBoundingClientRect().bottom
+        );
+        console.log(elementHeight);
+
         for (const xCoordKey in minUnitTopOffsets) {
             const xCoord = parseInt(xCoordKey);
             const newXHeigth =
-                blockBottom +
-                this._element.offsetHeight -
-                minUnitTopOffsets[xCoord];
+                blockBottom + elementHeight - minUnitTopOffsets[xCoord];
             Board.setXHeight(xCoord, newXHeigth);
         }
     }
 
     private _updateBoardRows() {
-        this._element.querySelectorAll('div').forEach((unit) => {
-            Board.updateRows(
-                this._getUnitXCoord(unit),
-                this._getUnitBottom(unit),
-                unit
-            );
-        });
+        this._element
+            .querySelectorAll<HTMLDivElement>('div.block__cell')
+            .forEach((unit) => {
+                Board.updateRows(
+                    this._getUnitXCoord(unit),
+                    this._getUnitBottom(unit),
+                    unit
+                );
+            });
     }
 
     private _deleteFullRows() {
@@ -266,6 +280,8 @@ export default class Block {
             this._updateBoardRows();
             this._deleteFullRows();
 
+            this.destroyShadow();
+
             this.notifyOnStop();
             return null;
         }
@@ -284,19 +300,26 @@ export default class Block {
 
     getLeftmostUnits() {
         const units: HTMLDivElement[] = [];
-        this._element.querySelectorAll('div').forEach((unit) => {
-            // leftmost units have zero left offset from parent
-            if (unit.offsetLeft === 0) units.push(unit);
-        });
+        this._element
+            .querySelectorAll<HTMLDivElement>('div.block__cell')
+            .forEach((unit) => {
+                // leftmost units have zero left offset from parent
+                if (unit.offsetLeft === 0) units.push(unit);
+            });
         return units;
     }
 
     getRightmostUnits() {
         const units: HTMLDivElement[] = [];
-        this._element.querySelectorAll('div').forEach((unit) => {
-            if (unit.offsetLeft === this._element.offsetWidth - 40)
-                units.push(unit);
-        });
+        const elementWidth = Math.abs(
+            this._element.getBoundingClientRect().right -
+                this._element.getBoundingClientRect().left
+        );
+        this._element
+            .querySelectorAll<HTMLDivElement>('div.block__cell')
+            .forEach((unit) => {
+                if (unit.offsetLeft === elementWidth - 40) units.push(unit);
+            });
         return units;
     }
 
@@ -342,7 +365,12 @@ export default class Block {
     }
 
     canMoveRight() {
-        const rightPosition = this.left() + this._element.offsetWidth;
+        //const rightPosition = this.left() + this._element.offsetWidth;
+        const elementWidth = Math.abs(
+            this._element.getBoundingClientRect().right -
+                this._element.getBoundingClientRect().left
+        );
+        const rightPosition = this.left() + elementWidth;
 
         // wall
         if (rightPosition === this._gameContainer!.offsetWidth) return false;

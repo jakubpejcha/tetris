@@ -10,6 +10,16 @@
         box-sizing: border-box;
         width: abs.$cell-size;
         height: abs.$cell-size;
+        position: relative;
+
+        & > .shadow {
+            position: absolute;
+            display: block;
+            width: inherit;
+            height: inherit;
+            left: -5px;
+            // top: 100px;
+        }
     }
 
     &--square {
@@ -116,6 +126,10 @@
         & > .block__cell {
             background-color: abs.$block-line-color;
             border: outset 5px abs.$block-line-border-color;
+
+            & > .shadow {
+                border: 2px solid abs.$block-line-color;
+            }
         }
 
         &--1 {

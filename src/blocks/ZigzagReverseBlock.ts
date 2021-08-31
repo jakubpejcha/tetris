@@ -9,6 +9,7 @@ export default class ZigzagReverseBlock extends Block {
 
     create() {
         this.render(templateCell, 4);
+        this.createShadow();
         this.startFalling();
     }
 }
