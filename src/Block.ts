@@ -14,7 +14,7 @@ export default class Block {
 
     // in px per frame
     // must divide cell size
-    private _fallingSpeed = 2;
+    private _fallingSpeed = 1;
 
     constructor(className: string) {
         this.className = className;
@@ -26,13 +26,16 @@ export default class Block {
     }
 
     private _getUnitXCoord(unit: HTMLDivElement) {
-        return this.left() + unit.offsetLeft;
+        return Math.abs(
+            unit.getBoundingClientRect().left -
+                this._gameContainer!.getBoundingClientRect().left
+        );
     }
 
     private _getUnitBottom(unit: HTMLDivElement) {
-        return (
-            parseFloat(getComputedStyle(this._element).bottom) +
-            (this._element.offsetHeight - unit.offsetHeight - unit.offsetTop)
+        return Math.abs(
+            unit.getBoundingClientRect().bottom -
+                this._gameContainer!.getBoundingClientRect().bottom
         );
     }
 
@@ -87,7 +90,6 @@ export default class Block {
 
     moveDown() {
         const top = parseFloat(getComputedStyle(this._element).top);
-        const bottom = parseFloat(getComputedStyle(this._element).bottom);
         if (this._moveAmount > this._distanceFromObj) {
             this._element.style.top = `${top + this._distanceFromObj}px`;
             this._distanceFromObj = 0;
@@ -114,6 +116,9 @@ export default class Block {
     }
 
     rotateClockWise() {
+        // const prevTop = this._element.getBoundingClientRect().top;
+        // const prevLeft = this._element.getBoundingClientRect().left;
+
         this._element.style.transform = `rotate(${
             this._currRotationAngle + 90
         }deg)`;
@@ -122,11 +127,27 @@ export default class Block {
 
         this._fixCellViewOnBlockRotation();
 
+        // const newTop = this._element.getBoundingClientRect().top;
+        // const newLeft = this._element.getBoundingClientRect().left;
+
+        // const deltaTop = newTop - prevTop;
+        // const deltaLeft = newLeft - prevLeft;
+
+        // this._element.style.top = `${
+        //     parseFloat(getComputedStyle(this._element).top) + deltaTop
+        // }`;
+        // this._element.style.left = `${
+        //     parseFloat(getComputedStyle(this._element).left) + deltaLeft
+        // }`;
+
         // recalculate distance
         this._calculateDistanceFromObj();
     }
 
     rotateAntiClockWise() {
+        // const prevTop = this._element.getBoundingClientRect().top;
+        // const prevLeft = this._element.getBoundingClientRect().left;
+
         this._element.style.transform = `rotate(${
             this._currRotationAngle - 90
         }deg)`;
@@ -134,6 +155,19 @@ export default class Block {
         this._currRotationAngle -= 90;
 
         this._fixCellViewOnBlockRotation();
+
+        // const newTop = this._element.getBoundingClientRect().top;
+        // const newLeft = this._element.getBoundingClientRect().left;
+
+        // const deltaTop = newTop - prevTop;
+        // const deltaLeft = newLeft - prevLeft;
+
+        // this._element.style.top = `${
+        //     parseFloat(getComputedStyle(this._element).top) + deltaTop
+        // }`;
+        // this._element.style.left = `${
+        //     parseFloat(getComputedStyle(this._element).left) + deltaLeft
+        // }`;
 
         // recalculate distance
         this._calculateDistanceFromObj();
@@ -160,9 +194,14 @@ export default class Block {
             } else if (minUnitTopOffsets[xCoord] > unit.offsetTop) {
                 minUnitTopOffsets[xCoord] = unit.offsetTop;
             }
+            console.log(xCoord);
         });
 
-        const blockBottom = parseFloat(getComputedStyle(this._element).bottom);
+        //const blockBottom = parseFloat(getComputedStyle(this._element).bottom);
+        const blockBottom = Math.abs(
+            this._element.getBoundingClientRect().bottom -
+                this._gameContainer!.getBoundingClientRect().bottom
+        );
 
         for (const xCoordKey in minUnitTopOffsets) {
             const xCoord = parseInt(xCoordKey);

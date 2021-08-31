@@ -15,16 +15,16 @@ import Board from './Board';
 Board.init();
 
 const blocks = [
-    CakeBlock,
-    SquareBlock,
-    ElBlock,
-    ElReverseBlock,
-    ZigzagBlock,
-    ZigzagReverseBlock,
-    Line1Block,
+    // CakeBlock,
+    // SquareBlock,
+    // ElBlock,
+    // ElReverseBlock,
+    // ZigzagBlock,
+    // ZigzagReverseBlock,
+    // Line1Block,
     Line2Block,
-    Line3Block,
-    Line4Block,
+    // Line3Block,
+    // Line4Block,
 ];
 
 const randomBlockPicker = () => {

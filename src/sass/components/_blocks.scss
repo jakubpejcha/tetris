@@ -127,6 +127,7 @@
             width: calc(#{abs.$cell-size} * 2);
             height: abs.$cell-size;
             grid-template-columns: repeat(2, abs.$cell-size);
+            transform-origin: 40px 0;
         }
 
         &--3 {
